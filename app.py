@@ -9,7 +9,7 @@ def update_crafts():
     data = request.json
 
 
-@app.route("/get-crafts", methods=["get"])
+@app.route("/get-crafts", methods=["GET"])
 def get_crafts():
     return jsonify(data)
 
