@@ -36,7 +36,7 @@ def get_crafts():
     raw_data = data
     #filtering the data to be sent back
     if isBusy != None:
-        raw_data = [cpu for cpu in raw_data if cpu["isBusy"] == booleanMapper(isBusy)]
+        raw_data = [cpu for cpu in raw_data if cpu["isBusy"] == booleanMapper(isBusy,True,False)]
 
 
     return jsonify(raw_data)
