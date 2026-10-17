@@ -19,8 +19,8 @@ class Crafts(db.Model):
     final_size = db.Column(db.Integer, nullable=False)
     created_time = db.Column(db.DateTime, default=datetime.now(UTC), nullable=False)
 
-    pending = db.relationship("pending_items", back_populates="crafts", cascade="all, delete-orphan")
-    active = db.relationship("active_items", back_populates="crafts", cascade="all, delete-orphan")
+    pending = db.relationship("PendingItems", back_populates="crafts", cascade="all, delete-orphan")
+    active = db.relationship("ActiveItems", back_populates="crafts", cascade="all, delete-orphan")
 
 
 class PendingItems(db.Model):
@@ -33,7 +33,7 @@ class PendingItems(db.Model):
 
     craft_id = db.Column(db.Integer, db.ForeignKey("crafts.id"), nullable=False)
 
-    craft = db.relationship("crafts", back_populates="pending")
+    craft = db.relationship("Crafts", back_populates="pending")
 
     
 class ActiveItems(db.Model):
@@ -46,7 +46,7 @@ class ActiveItems(db.Model):
 
     craft_id = db.Column(db.Integer, db.ForeignKey("crafts.id"), nullable=False)
 
-    craft = db.relationship("crafts", back_populates="active")
+    craft = db.relationship("Crafts", back_populates="active")
 
 
 with app.app_context():
