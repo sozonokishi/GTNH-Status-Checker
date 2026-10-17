@@ -5,8 +5,8 @@ data = {}
 
 def booleanMapper(input_value, if_true_convert_to, if_false_convert_to):
     #only saving lowercase string, cause im just gonna compare insensitively anyway (i.e. TrUe == true)
-    possible_true_values = ["true",1,True]
-    possible_false_values = ["false",1,False]
+    possible_true_values = ["true","1"]
+    possible_false_values = ["false","0"]
 
     if type(input_value) == str:
         input_value = input_value.lower()
