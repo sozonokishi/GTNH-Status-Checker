@@ -11,6 +11,14 @@ def update_crafts():
 
 @app.route("/get-crafts", methods=["GET"])
 def get_crafts():
+    #setting up possible filters
+    isBusy = request.args.get("isBusy")
+
+    #filtering the data to be sent back
+    if isBusy != None:
+        data = [cpu for cpu in data if cpu["isBusy"] == isBusy]
+
+
     return jsonify(data)
 
 
