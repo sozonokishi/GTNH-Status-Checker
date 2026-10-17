@@ -33,7 +33,7 @@ class PendingItems(db.Model):
 
     craft_id = db.Column(db.Integer, db.ForeignKey("crafts.id"), nullable=False)
 
-    craft = db.relationship("Crafts", back_populates="pending")
+    crafts = db.relationship("Crafts", back_populates="pending")
 
     
 class ActiveItems(db.Model):
@@ -46,7 +46,7 @@ class ActiveItems(db.Model):
 
     craft_id = db.Column(db.Integer, db.ForeignKey("crafts.id"), nullable=False)
 
-    craft = db.relationship("Crafts", back_populates="active")
+    crafts = db.relationship("Crafts", back_populates="active")
 
 
 with app.app_context():
