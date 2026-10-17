@@ -33,13 +33,13 @@ def get_crafts():
     #setting up possible filters
     isBusy = request.args.get("isBusy")
 
-
+    raw_data = data
     #filtering the data to be sent back
     if isBusy != None:
-        data = [cpu for cpu in data if cpu["isBusy"] == booleanMapper(isBusy)]
+        raw_data = [cpu for cpu in raw_data if cpu["isBusy"] == booleanMapper(isBusy)]
 
 
-    return jsonify(data)
+    return jsonify(raw_data)
 
 
 if __name__ == "__main__":
