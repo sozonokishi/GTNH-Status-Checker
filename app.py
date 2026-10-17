@@ -90,7 +90,7 @@ def update_crafts():
         for pending_item in cpu.get("pendingItems"):
             pending_label = pending_item["label"]
             pending_size = pending_item["size"]
-            pending_item_row = PendingItems(pending_label=pending_label, pending_size=pending_size)
+            pending_item_row = PendingItems(pending_label=pending_label, pending_size=pending_size, crafts=craft_row)
 
             db.session.add(pending_item_row)
 
@@ -98,7 +98,7 @@ def update_crafts():
         for active_item in cpu.get("activeItems"):
             active_label = active_item["label"]
             active_size = active_item["size"]
-            active_item_row = ActiveItems(active_label=active_label, active_size=active_size)
+            active_item_row = ActiveItems(active_label=active_label, active_size=active_size, crafts=craft_row)
 
             db.session.add(active_item_row)
 
