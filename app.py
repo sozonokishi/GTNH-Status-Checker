@@ -17,7 +17,7 @@ class Crafts(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     final_label = db.Column(db.String(50), nullable=False)
-    final_size = db.Column(db.Integer, nullable=False)
+    remaining_size = db.Column(db.Integer, nullable=False)
     created_time = db.Column(db.DateTime, default=func.now(), nullable=False)
 
     pending = db.relationship("PendingItems", back_populates="crafts", cascade="all, delete-orphan")
@@ -82,8 +82,8 @@ def update_crafts():
     for cpu in cpus:
         #for Craft table
         final_label = cpu.get("finalOutput")["label"]
-        final_size = cpu.get("finalOutput")["size"]
-        craft_row = Crafts(final_label=final_label, final_size=final_size)
+        remaining_size = cpu.get("finalOutput")["size"]
+        craft_row = Crafts(final_label=final_label, remaining_size=remaining_size)
 
         db.session.add(craft_row)
 
@@ -142,7 +142,7 @@ def get_crafts():
         data.append(
             {
                 "output_label": craft.final_label,
-                "output_size": craft.final_size,
+                "remaining_size": craft.remaining_size,
                 "pending_items": pending_items,
                 "active_items": active_items
             }
