@@ -86,55 +86,57 @@ def update_crafts():
 
     #gather data from final outputs
     for cpu in cpus:
-        #Check if it's a craft from the past, also calling the items to the added into the "Crafts" table
-        final_label = cpu.get("finalOutput")["label"]
-        remaining_size = cpu.get("finalOutput")["size"]
+        #if there is even crafts to being with
+        if cpu.get("finalOutput")["label"] is not None:
+            #Check if it's a craft from the past, also calling the items to the added into the "Crafts" table
+            final_label = cpu.get("finalOutput")["label"]
+            remaining_size = cpu.get("finalOutput")["size"]
 
-        #don't get confused with the craft_row, the one above creates a new row, this one below, queries the existing Crafts db
-        last_same_craft_row = Crafts.query\
-            .filter(Crafts.final_label == final_label)\
-            .filter(Crafts.created_time >= one_minute_ago)\
-            .order_by(Crafts.id.desc()).first()
+            #don't get confused with the craft_row, the one above creates a new row, this one below, queries the existing Crafts db
+            last_same_craft_row = Crafts.query\
+                .filter(Crafts.final_label == final_label)\
+                .filter(Crafts.created_time >= one_minute_ago)\
+                .order_by(Crafts.id.desc()).first()
 
-        #if this label exist within the last 1 minute, it would mean that it is most probably a continuation
-        if last_same_craft_row:
-            #check if pending items and active items are exactly the same
-            last_pending_info = last_same_craft_row.pending
-            last_active_info = last_same_craft_row.active
+            #if this label exist within the last 1 minute, it would mean that it is most probably a continuation
+            if last_same_craft_row:
+                #check if pending items and active items are exactly the same
+                last_pending_info = last_same_craft_row.pending
+                last_active_info = last_same_craft_row.active
 
-            last_pending_tuple = tuple(sorted([p.pending_label, p.pending_size] for p in last_pending_info))
-            last_active_tuple = tuple(sorted([a.active_label, a.active_size] for a in last_active_info))
+                last_pending_tuple = tuple(sorted([p.pending_label, p.pending_size] for p in last_pending_info))
+                last_active_tuple = tuple(sorted([a.active_label, a.active_size] for a in last_active_info))
 
-            pending_tuple = tuple(sorted([p["label"], p["size"]] for p in cpu.get("pendingItems")))
-            active_tuple = tuple(sorted([a["label"], a["size"]] for a in cpu.get("activeItems")))
+                pending_tuple = tuple(sorted([p["label"], p["size"]] for p in cpu.get("pendingItems")))
+                active_tuple = tuple(sorted([a["label"], a["size"]] for a in cpu.get("activeItems")))
 
-            if last_pending_tuple == pending_tuple and active_tuple == last_active_tuple:
-                stuck_count = last_same_craft_row.stuck_count + 1
+                if last_pending_tuple == pending_tuple and active_tuple == last_active_tuple:
+                    stuck_count = last_same_craft_row.stuck_count + 1
 
 
-        else:
-            stuck_count = 0
+            else:
+                stuck_count = 0
 
-        #now we can determine the chain_count, let's add the row's value
-        craft_row = Crafts(final_label=final_label, remaining_size=remaining_size, stuck_count= stuck_count)
+            #now we can determine the chain_count, let's add the row's value
+            craft_row = Crafts(final_label=final_label, remaining_size=remaining_size, stuck_count= stuck_count)
 
-        db.session.add(craft_row)
+            db.session.add(craft_row)
 
-        #for Pending table
-        for pending_item in cpu.get("pendingItems"):
-            pending_label = pending_item["label"]
-            pending_size = pending_item["size"]
-            pending_item_row = PendingItems(pending_label=pending_label, pending_size=pending_size, crafts=craft_row)
+            #for Pending table
+            for pending_item in cpu.get("pendingItems"):
+                pending_label = pending_item["label"]
+                pending_size = pending_item["size"]
+                pending_item_row = PendingItems(pending_label=pending_label, pending_size=pending_size, crafts=craft_row)
 
-            db.session.add(pending_item_row)
+                db.session.add(pending_item_row)
 
-        #for Active table
-        for active_item in cpu.get("activeItems"):
-            active_label = active_item["label"]
-            active_size = active_item["size"]
-            active_item_row = ActiveItems(active_label=active_label, active_size=active_size, crafts=craft_row)
+            #for Active table
+            for active_item in cpu.get("activeItems"):
+                active_label = active_item["label"]
+                active_size = active_item["size"]
+                active_item_row = ActiveItems(active_label=active_label, active_size=active_size, crafts=craft_row)
 
-            db.session.add(active_item_row)
+                db.session.add(active_item_row)
 
     db.session.commit()
 
