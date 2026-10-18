@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import func
 import os
 from datetime import datetime, UTC, timedelta
 
@@ -17,7 +18,7 @@ class Crafts(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     final_label = db.Column(db.String(50), nullable=False)
     final_size = db.Column(db.Integer, nullable=False)
-    created_time = db.Column(db.DateTime, default=datetime.now(UTC), nullable=False)
+    created_time = db.Column(db.DateTime, default=func.now(), nullable=False)
 
     pending = db.relationship("PendingItems", back_populates="crafts", cascade="all, delete-orphan")
     active = db.relationship("ActiveItems", back_populates="crafts", cascade="all, delete-orphan")
@@ -29,7 +30,7 @@ class PendingItems(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     pending_label = db.Column(db.String(50), nullable=False)
     pending_size = db.Column(db.Integer, nullable=False)
-    created_time = db.Column(db.DateTime, default=datetime.now(UTC), nullable=False)
+    created_time = db.Column(db.DateTime, default=func.now(), nullable=False)
 
     craft_id = db.Column(db.Integer, db.ForeignKey("crafts.id"), nullable=False)
 
@@ -42,7 +43,7 @@ class ActiveItems(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     active_label = db.Column(db.String(50), nullable=False)
     active_size = db.Column(db.Integer, nullable=False)
-    created_time = db.Column(db.DateTime, default=datetime.now(UTC), nullable=False)
+    created_time = db.Column(db.DateTime, default=func.now(), nullable=False)
 
     craft_id = db.Column(db.Integer, db.ForeignKey("crafts.id"), nullable=False)
 
