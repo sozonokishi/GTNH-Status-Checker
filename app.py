@@ -16,7 +16,7 @@ class Crafts(db.Model):
     __tablename__ = "crafts"
 
     id = db.Column(db.Integer, primary_key=True)
-    final_label = db.Column(db.String(100), nullable=False)
+    final_label = db.Column(db.String(255), nullable=False)
     remaining_size = db.Column(db.Integer, nullable=False)
     stuck_count = db.Column(db.Integer, default=0)
     created_time = db.Column(db.DateTime, default=func.now(), nullable=False)
@@ -29,7 +29,7 @@ class PendingItems(db.Model):
     __tablename__ = "pending_items"
 
     id = db.Column(db.Integer, primary_key=True)
-    pending_label = db.Column(db.String(100), nullable=False)
+    pending_label = db.Column(db.String(255), nullable=False)
     pending_size = db.Column(db.Integer, nullable=False)
     created_time = db.Column(db.DateTime, default=func.now(), nullable=False)
 
@@ -42,7 +42,7 @@ class ActiveItems(db.Model):
     __tablename__ = "active_items"
 
     id = db.Column(db.Integer, primary_key=True)
-    active_label = db.Column(db.String(100), nullable=False)
+    active_label = db.Column(db.String(255), nullable=False)
     active_size = db.Column(db.Integer, nullable=False)
     created_time = db.Column(db.DateTime, default=func.now(), nullable=False)
 
@@ -81,7 +81,7 @@ def update_crafts():
 
     cpus = [cpu for cpu in data if cpu.get("isBusy")==True]
     time_baseline_on_call = datetime.now(UTC).replace(tzinfo=None)
-    one_minute_ago = time_baseline_on_call - timedelta(minutes=1)
+    one_minute_ago = time_baseline_on_call - timedelta(minutes=1, seconds=10) #buffer 10 seconds
 
 
     #gather data from final outputs
