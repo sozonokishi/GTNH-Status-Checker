@@ -162,6 +162,8 @@ def get_crafts():
     crafts_query = Crafts.query.filter(Crafts.created_time <= created_to, Crafts.created_time >= created_from).order_by(Crafts.created_time.desc()).all()
 
     #creating the items to be returned.
+    return {"data": [crafts.to_dict() for crafts in crafts_query]}
+    """
     data = []
     for craft in crafts_query:
         pending_items = []
@@ -198,6 +200,7 @@ def get_crafts():
         "to": created_to.isoformat(),
         "data": data
     })
+    """
 
 
 if __name__ == "__main__":
