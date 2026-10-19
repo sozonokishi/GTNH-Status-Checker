@@ -162,35 +162,12 @@ def get_crafts():
     crafts_query = Crafts.query.filter(Crafts.created_time <= created_to, Crafts.created_time >= created_from).order_by(Crafts.created_time.desc()).all()
 
     #creating the items to be returned.
-    return {"data": [crafts.to_dict() for crafts in crafts_query]}
-    """
     data = []
     for craft in crafts_query:
-        pending_items = []
-        active_items = []
-
-        for pending_item in craft.pending:
-            pending_items.append(
-                {
-                    "label": pending_item.pending_label,
-                    "size": pending_item.pending_size
-                }
-            )
-
-        for active_item in craft.active:
-            active_items.append(
-                {
-                    "label": active_item.active_label,
-                    "size": active_item.active_size
-                }
-            )
-
         data.append(
             {
                 "output_label": craft.final_label,
                 "remaining_size": craft.remaining_size,
-                "pending_items": pending_items,
-                "active_items": active_items
             }
         )
 
@@ -200,7 +177,7 @@ def get_crafts():
         "to": created_to.isoformat(),
         "data": data
     })
-    """
+
 
 
 if __name__ == "__main__":
