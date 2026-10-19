@@ -144,11 +144,22 @@ def update_crafts():
 @app.route("/get-crafts", methods=["GET"])
 def get_crafts():
     #setting up possible filters
-    created_to = request.args.get("to",datetime.now(UTC))
-    created_from = request.args.get("from",created_to - timedelta(hours=1)) #going to just have whatever created_to - 1 if there is no value
+    now_utc = datetime.now(UTC)
+
+    created_to = request.args.get("to")
+    try:
+        created_to = datetime.fromisoformat(created_to)
+    except:
+        created_to = now_utc
+
+    created_from = request.args.get("from") 
+    try:
+        created_from = datetime.fromisoformat(created_from)
+    except:
+        created_from = created_to - timedelta(hours=1) #going to just have whatever created_to - 1 if there is no value
 
     #filter and query for all
-    crafts_query = Crafts.query.filter(Crafts.created_time <= created_to, Crafts.created_time >= created_from).all()
+    crafts_query = Crafts.query.filter(Crafts.created_time <= created_to, Crafts.created_time >= created_from).order_by(Crafts.created_time.desc()).all()
 
     #creating the items to be returned.
     data = []
