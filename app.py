@@ -87,7 +87,7 @@ def update_crafts():
     #gather data from final outputs
     for cpu in cpus:
         #if there is even crafts to being with
-        if cpu.get("finalOutput")["label"] is not None:
+        if cpu.get("finalOutput") is not None:
             #Check if it's a craft from the past, also calling the items to the added into the "Crafts" table
             final_label = cpu.get("finalOutput")["label"]
             remaining_size = cpu.get("finalOutput")["size"]
