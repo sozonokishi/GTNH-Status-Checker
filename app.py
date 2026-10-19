@@ -166,6 +166,7 @@ def get_crafts():
     for craft in crafts_query:
         data.append(
             {
+                "craft_id": craft.id,
                 "output_label": craft.final_label,
                 "remaining_size": craft.remaining_size,
             }
@@ -178,6 +179,16 @@ def get_crafts():
         "data": data
     })
 
+
+@app.route("/api/crafts/<int:crafts_id>", methods=["GET"])
+def get_crafts_detail(crafts_id):
+    craft = Crafts.query.get(crafts_id) #get the row based on the primary key value
+    data = {}
+
+    data["active"] = [{"label":active_item.active_label, "size": active_item.active_size} for active_item in craft.active]
+    data["pending"] = [{"label":pending_item.pending_label, "size": pending_item.pending_size} for pending_item in craft.pending]
+
+    return jsonify(data)
 
 
 if __name__ == "__main__":
