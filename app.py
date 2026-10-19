@@ -91,6 +91,7 @@ def update_crafts():
             #Check if it's a craft from the past, also calling the items to the added into the "Crafts" table
             final_label = cpu.get("finalOutput")["label"]
             remaining_size = cpu.get("finalOutput")["size"]
+            stuck_count = 0
 
             #don't get confused with the craft_row, the one above creates a new row, this one below, queries the existing Crafts db
             last_same_craft_row = Crafts.query\
@@ -113,9 +114,6 @@ def update_crafts():
                 if last_pending_tuple == pending_tuple and active_tuple == last_active_tuple:
                     stuck_count = last_same_craft_row.stuck_count + 1
 
-
-            else:
-                stuck_count = 0
 
             #now we can determine the chain_count, let's add the row's value
             craft_row = Crafts(final_label=final_label, remaining_size=remaining_size, stuck_count= stuck_count)
