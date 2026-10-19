@@ -145,7 +145,7 @@ def update_crafts():
 def get_crafts():
     #setting up possible filters
     created_to = request.args.get("to",datetime.now(UTC))
-    created_from = request.args.get("from",created_to - timedelta(hours=24)) #going to just have whatever created_to - 24 if there is no value
+    created_from = request.args.get("from",created_to - timedelta(hours=1)) #going to just have whatever created_to - 1 if there is no value
 
     #filter and query for all
     crafts_query = Crafts.query.filter(Crafts.created_time <= created_to, Crafts.created_time >= created_from).all()
