@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify, Response
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import func, select
-from sqlalchemy.orm import session
+from sqlalchemy import func
 import os
 from datetime import datetime, UTC, timedelta
 from time import sleep
@@ -196,10 +195,9 @@ def get_crafts_detail(crafts_id):
 
 @app.route("/api/stream/crafts")
 def stream_crafts():
-    #grabbing the latest batch id
     def generate():
-        statement = select(Crafts.batch_id).order_by(Crafts.id.desc()).first()
-        latest_batch_id = session.scalar(statement)
+        #grabbing the latest batch id
+        latest_batch_id = Crafts.query(Crafts.batch_id).order_by(Crafts.id.desc()).first()
 
         #query for all data from the latest batch id
         data = Crafts.query.filter(Crafts.batch_id == latest_batch_id).all()
