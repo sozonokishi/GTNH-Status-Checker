@@ -85,6 +85,15 @@ def update_crafts():
     time_baseline_on_call = datetime.now(UTC).replace(tzinfo=None)
     one_minute_ago = time_baseline_on_call - timedelta(minutes=1, seconds=10) #buffer 10 seconds
 
+    row = Crafts.query.order_by(Crafts.id.desc()).first()
+    latest_batch_id = row.batch_id
+
+    #only really applies to the first time when the batch size is still null.
+    if latest_batch_id == None:
+        latest_batch_id = 0
+
+    batch_id = latest_batch_id + 1
+
 
     #gather data from final outputs
     for cpu in cpus:
@@ -118,7 +127,7 @@ def update_crafts():
 
 
             #now we can determine the chain_count, let's add the row's value
-            craft_row = Crafts(final_label=final_label, remaining_size=remaining_size, stuck_count= stuck_count)
+            craft_row = Crafts(final_label=final_label, remaining_size=remaining_size, stuck_count= stuck_count, batch_id = batch_id)
 
             db.session.add(craft_row)
 
@@ -197,9 +206,8 @@ def get_crafts_detail(crafts_id):
 def stream_crafts():
     def generate():
         #grabbing the latest batch id
-        row = Crafts.query(Crafts.batch_id).order_by(Crafts.id.desc()).first()
+        row = Crafts.query.order_by(Crafts.id.desc()).first()
         latest_batch_id = row.batch_id
-        print(row)
 
         #query for all data from the latest batch id
         data = Crafts.query.filter(Crafts.batch_id == latest_batch_id).all()
