@@ -205,15 +205,17 @@ def get_crafts_detail(crafts_id):
 @app.route("/api/stream/crafts")
 def stream_crafts():
     def generate():
-        #grabbing the latest batch id
-        row = Crafts.query.order_by(Crafts.id.desc()).first()
-        latest_batch_id = row.batch_id
+        while True:
+            with app.app_context():
+            #grabbing the latest batch id
+                row = Crafts.query.order_by(Crafts.id.desc()).first()
+                latest_batch_id = row.batch_id
 
-        #query for all data from the latest batch id
-        data = Crafts.query.filter(Crafts.batch_id == latest_batch_id).all()
-        yield f"data: {json.dumps(data)}\n\n"
+                #query for all data from the latest batch id
+                data = Crafts.query.filter(Crafts.batch_id == latest_batch_id).all()
+            yield f"data: {json.dumps(data)}\n\n"
 
-        sleep(5)
+            sleep(5)
 
     return Response(generate(),mimetype="text/event-stream")
 
