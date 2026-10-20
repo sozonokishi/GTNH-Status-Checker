@@ -226,7 +226,7 @@ def stream_crafts():
                         }
                     )
 
-            yield f"data: {json.dump(data)}\n\n"
+            yield f"data: {json.dumps(data)}\n\n"
             sleep(5)
 
     return Response(stream_with_context(generate()),mimetype="text/event-stream")
