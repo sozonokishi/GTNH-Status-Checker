@@ -1,8 +1,10 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import func
+from sqlalchemy import func, select
+from sqlalchemy.orm import session
 import os
 from datetime import datetime, UTC, timedelta
+from time import sleep
 
 
 app = Flask(__name__)
@@ -20,6 +22,7 @@ class Crafts(db.Model):
     remaining_size = db.Column(db.Integer, nullable=False)
     stuck_count = db.Column(db.Integer, default=0)
     created_time = db.Column(db.DateTime, default=func.now(), nullable=False)
+    batch_id = db.Column(db.Integer, default=None)
 
     pending = db.relationship("PendingItems", back_populates="crafts", cascade="all, delete-orphan")
     active = db.relationship("ActiveItems", back_populates="crafts", cascade="all, delete-orphan")
@@ -190,6 +193,21 @@ def get_crafts_detail(crafts_id):
 
     return jsonify(data)
 
+
+@app.route("/api/stream/crafts")
+def stream_crafts():
+    #grabbing the latest batch id
+    def generate():
+        statement = select(Crafts.batch_id).order_by(Crafts.id.desc()).first()
+        latest_batch_id = session.scalar(statement)
+
+        #query for all data from the latest batch id
+        data = Crafts.query.filter(Crafts.batch_id == latest_batch_id).all()
+        yield f"data: {json.dumps(data)}\n\n"
+
+        sleep(5)
+
+    return Response(generate(),mimetype="text/event-stream")
 
 if __name__ == "__main__":
     app.run(debug=True)
