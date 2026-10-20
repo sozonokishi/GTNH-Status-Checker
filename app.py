@@ -197,7 +197,9 @@ def get_crafts_detail(crafts_id):
 def stream_crafts():
     def generate():
         #grabbing the latest batch id
-        latest_batch_id = Crafts.query(Crafts.batch_id).order_by(Crafts.id.desc()).first()
+        row = Crafts.query(Crafts.batch_id).order_by(Crafts.id.desc()).first()
+        latest_batch_id = row.batch_id
+        print(row)
 
         #query for all data from the latest batch id
         data = Crafts.query.filter(Crafts.batch_id == latest_batch_id).all()
