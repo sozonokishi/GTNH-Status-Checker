@@ -157,21 +157,38 @@ def update_crafts():
 def get_crafts():
     #setting up possible filters
     now_utc = datetime.now(UTC)
+    filter_statements = []
 
+    #filter created to time
     created_to = request.args.get("to")
     try:
         created_to = datetime.fromisoformat(created_to)
     except:
         created_to = now_utc
+    filter_statements.append(Crafts.created_time <= created_to)
 
+    #filter created from time
     created_from = request.args.get("from") 
     try:
         created_from = datetime.fromisoformat(created_from)
     except:
         created_from = created_to - timedelta(hours=1) #going to just have whatever created_to - 1 if there is no value
+    filter_statements.append(Crafts.created_time >= created_from)
+
+    #filter to only take latest batch
+    try:
+        isLatest = request.args.get("latest").lower()
+        if isLatest:
+            #get the latest batch id
+            row = Crafts.query.order_by(Crafts.id.desc()).first()
+            latest_batch_id = row.batch_id
+            filter_statements.append(Crafts.batch_id == latest_batch_id)
+    except:
+        pass
+
 
     #filter and query for all
-    crafts_query = Crafts.query.filter(Crafts.created_time <= created_to, Crafts.created_time >= created_from).order_by(Crafts.created_time.desc()).all()
+    crafts_query = Crafts.query.filter(*filter_statements).order_by(Crafts.created_time.desc()).all()
 
     #creating the items to be returned.
     data = []
@@ -203,33 +220,6 @@ def get_crafts_detail(crafts_id):
 
     return jsonify(data)
 
-
-@app.route("/api/stream/crafts")
-def stream_crafts():
-    def generate():
-        while True:
-            with app.app_context():
-            #grabbing the latest batch id
-                row = Crafts.query.order_by(Crafts.id.desc()).first()
-                latest_batch_id = row.batch_id
-
-                #query for all data from the latest batch id
-                crafts_data = Crafts.query.filter(Crafts.batch_id == latest_batch_id).all()
-                data = []
-                for craft in crafts_data:
-                    data.append(
-                        {
-                            "craft_id": craft.id,
-                            "output_label": craft.final_label,
-                            "remaining_size": craft.remaining_size,
-                            "batch_id": craft.batch_id
-                        }
-                    )
-
-            yield f"data: {json.dumps(data)}\n\n"
-            sleep(5)
-
-    return Response(stream_with_context(generate()),mimetype="text/event-stream")
 
 if __name__ == "__main__":
     app.run(debug=True)
