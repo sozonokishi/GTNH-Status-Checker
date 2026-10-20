@@ -214,7 +214,8 @@ def stream_crafts():
 
                 #query for all data from the latest batch id
                 data = Crafts.query.filter(Crafts.batch_id == latest_batch_id).all()
-            yield f"data: {json.dumps(data)}\n\n"
+
+            yield f"data: {jsonify(data)}\n\n"
 
             sleep(5)
 
