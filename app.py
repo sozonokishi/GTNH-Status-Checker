@@ -213,10 +213,10 @@ def stream_crafts():
                 latest_batch_id = row.batch_id
 
                 #query for all data from the latest batch id
-                data = Crafts.query.filter(Crafts.batch_id == latest_batch_id).all()
+                crafts_data = Crafts.query.filter(Crafts.batch_id == latest_batch_id).all()
+                data = [craft.to_dict() for craft in crafts_data]
 
             yield f"data: {jsonify(data)}\n\n"
-
             sleep(5)
 
     return Response(generate(),mimetype="text/event-stream")
