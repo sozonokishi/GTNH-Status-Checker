@@ -181,6 +181,7 @@ def get_crafts():
                 "craft_id": craft.id,
                 "output_label": craft.final_label,
                 "remaining_size": craft.remaining_size,
+                "batch_id": craft.batch_id
             }
         )
 
@@ -214,7 +215,16 @@ def stream_crafts():
 
                 #query for all data from the latest batch id
                 crafts_data = Crafts.query.filter(Crafts.batch_id == latest_batch_id).all()
-                data = [craft.to_dict() for craft in crafts_data]
+                data = []
+                for craft in crafts_data:
+                    data.append(
+                        {
+                            "craft_id": craft.id,
+                            "output_label": craft.final_label,
+                            "remaining_size": craft.remaining_size,
+                            "batch_id": craft.batch_id
+                        }
+                    )
 
             yield f"data: {jsonify(data)}\n\n"
             sleep(5)
