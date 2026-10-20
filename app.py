@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, Response
+from flask import Flask, request, jsonify, Response, stream_with_context
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 import os
@@ -229,7 +229,7 @@ def stream_crafts():
             yield f"data: {jsonify(data)}\n\n"
             sleep(5)
 
-    return Response(generate(),mimetype="text/event-stream")
+    return Response(stream_with_context(generate()),mimetype="text/event-stream")
 
 if __name__ == "__main__":
     app.run(debug=True)
