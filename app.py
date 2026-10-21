@@ -1,13 +1,14 @@
 from flask import Flask, request, jsonify, Response, stream_with_context
+from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 import os
 from datetime import datetime, UTC, timedelta
 from time import sleep
-import json
 
 
 app = Flask(__name__)
+CORS(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 db = SQLAlchemy(app)
 
