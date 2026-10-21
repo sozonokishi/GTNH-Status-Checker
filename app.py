@@ -184,6 +184,8 @@ def get_crafts():
             row = Crafts.query.order_by(Crafts.id.desc()).first()
             latest_batch_id = row.batch_id
             filter_statements.append(Crafts.batch_id == latest_batch_id)
+            #also make sure the craft is within 1 minute of the call (with around 10 seconds buffer)
+            filter_statements.append(Crafts.created_time >= now_utc - timedelta(minutes=1, seconds=10))
     except:
         pass
 
