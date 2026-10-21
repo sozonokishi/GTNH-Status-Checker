@@ -198,7 +198,8 @@ def get_crafts():
                 "craft_id": craft.id,
                 "output_label": craft.final_label,
                 "remaining_size": craft.remaining_size,
-                "batch_id": craft.batch_id
+                "batch_id": craft.batch_id,
+                "stuck_count": craft.stuck_count
             }
         )
 
