@@ -137,14 +137,15 @@ export default function App(){
         { r: 255, g: 82,  b: 82  }  //(Danger - #FF5252)
     ]
 
-    //return danger if it's past the max value
-    if (value >= maxValue) {return `rbg(${colorPalette[-1].r},${colorPalette[-1].g},${colorPalette[-1].b})`}
+    const segmentCount:number = colorPalette.length;
+    const maxIndex:number = segmentCount - 1;
 
-    const segmentCount:number = colorPalette.length
+    //return danger if it's past the max value
+    if (value >= maxValue) {return `rgb(${colorPalette[maxIndex].r},${colorPalette[maxIndex].g},${colorPalette[maxIndex].b})`}
 
     const valueScaledToSegment:number = segmentCount - segmentCount*(maxValue-value)/maxValue; //To get the value scaled to segment's value, (50 in range [0,100] would yield 2 for scaled value)
-    const segmentCeiling:number = Math.ceil(valueScaledToSegment); //To get the ceiling of the scaled value (i.e. 3.33 -> 4)
-    const segmentFloor:number = Math.max(0,segmentCeiling - 1); //to consider the situation where segmentceiling is 0.
+    const segmentFloor:number = Math.floor(valueScaledToSegment); //To get the ceiling of the scaled value (i.e. 3.33 -> 3)
+    const segmentCeiling:number = Math.min(maxIndex,segmentFloor + 1); //Capped the value to be maximum of max index.
 
     const factor = valueScaledToSegment - segmentFloor;
 
