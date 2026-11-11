@@ -1,11 +1,12 @@
 from flask import Flask, request, jsonify, Response, stream_with_context
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import func
+from sqlalchemy import func, delete
 import os
 from datetime import datetime, UTC, timedelta
 from time import sleep
 
+CUTOFF_TIME = 14 #days
 
 app = Flask(__name__)
 CORS(app)
@@ -37,7 +38,7 @@ class PendingItems(db.Model):
     pending_size = db.Column(db.Integer, nullable=False)
     created_time = db.Column(db.DateTime, default=func.now(), nullable=False)
 
-    craft_id = db.Column(db.Integer, db.ForeignKey("crafts.id"), nullable=False)
+    craft_id = db.Column(db.Integer, db.ForeignKey("crafts.id", ondelete="CASCADE"), nullable=False)
 
     crafts = db.relationship("Crafts", back_populates="pending")
 
@@ -50,7 +51,7 @@ class ActiveItems(db.Model):
     active_size = db.Column(db.Integer, nullable=False)
     created_time = db.Column(db.DateTime, default=func.now(), nullable=False)
 
-    craft_id = db.Column(db.Integer, db.ForeignKey("crafts.id"), nullable=False)
+    craft_id = db.Column(db.Integer, db.ForeignKey("crafts.id", ondelete="CASCADE"), nullable=False)
 
     crafts = db.relationship("Crafts", back_populates="active")
 
@@ -148,6 +149,12 @@ def update_crafts():
                 active_item_row = ActiveItems(active_label=active_label, active_size=active_size, crafts=craft_row)
 
                 db.session.add(active_item_row)
+
+
+    #Delete data past cutoff time
+    cutoff_datetime = datetime.now(UTC) - timedelta(days=CUTOFF_TIME)
+    delete_statement = delete(Crafts).where(Crafts.created_time < cutoff_datetime)
+    db.session.execute(delete_statement)
 
     db.session.commit()
 
