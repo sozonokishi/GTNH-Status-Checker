@@ -152,7 +152,7 @@ def update_crafts():
 
 
     #Delete data past cutoff time
-    cutoff_datetime = datetime.now(UTC) - timedelta(days=CUTOFF_TIME)
+    cutoff_datetime = datetime.now() - timedelta(days=CUTOFF_TIME)
     delete_statement = delete(Crafts).where(Crafts.created_time < cutoff_datetime)
     db.session.execute(delete_statement)
 
